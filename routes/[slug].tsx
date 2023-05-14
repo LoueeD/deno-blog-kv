@@ -7,44 +7,44 @@ import SiteFooter from "../components/SiteFooter.tsx";
 import { isLoggedIn } from "../utils/auth.ts";
 import { Post, getPost } from "../utils/getPosts.ts";
 
-const CACHE = await caches.open("v6");
+// const CACHE = await caches.open("v6");
 
 export const handler: Handlers = {
   async GET(req, ctx) {
     const loggedIn = await isLoggedIn(req);
-    if (!loggedIn) {
-      const res = await CACHE.match(req);
+    // if (!loggedIn) {
+    //   // const res = await CACHE.match(req);
       
-      if (res) {
-        const timestamp = res.headers.get('x-cache');
-        const duration = timestamp
-          ? new Date().getTime() - new Date(timestamp).getTime()
-          : 0;
-        // convert milliseconds to minutes
-        const mins = Math.floor(duration / 60000);
-        console.log(`Cached for ${mins} mins`);
-        // Here we can control when to ignore the cache
-        // e.g we can bypass the cache after 1 hour
-        res.headers.set("x-cache-hit", "true");
-        // return cached response
-        if (mins < 60) {
-          // return res;
-        }
-      }
-    }
+    //   if (res) {
+    //     const timestamp = res.headers.get('x-cache');
+    //     const duration = timestamp
+    //       ? new Date().getTime() - new Date(timestamp).getTime()
+    //       : 0;
+    //     // convert milliseconds to minutes
+    //     const mins = Math.floor(duration / 60000);
+    //     console.log(`Cached for ${mins} mins`);
+    //     // Here we can control when to ignore the cache
+    //     // e.g we can bypass the cache after 1 hour
+    //     res.headers.set("x-cache-hit", "true");
+    //     // return cached response
+    //     if (mins < 60) {
+    //       // return res;
+    //     }
+    //   }
+    // }
     const post = await getPost(ctx.params.slug);
     if (!post) {
       return ctx.renderNotFound();
     }
     const response = ctx.render({ post, loggedIn });
-    if (response instanceof Promise) {
-      response.then((res) => {
-        const clonedRequest = res.clone();
-        clonedRequest.headers.set('x-cache', new Date().toUTCString());
-        console.log(`Caching post "${post.title}"`);
-        CACHE.put(req, clonedRequest);
-      })
-    }
+    // if (response instanceof Promise) {
+    //   response.then((res) => {
+    //     const clonedRequest = res.clone();
+    //     clonedRequest.headers.set('x-cache', new Date().toUTCString());
+    //     console.log(`Caching post "${post.title}"`);
+    //     CACHE.put(req, clonedRequest);
+    //   })
+    // }
     return response;
   },
 };
