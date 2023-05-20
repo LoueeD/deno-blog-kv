@@ -39,7 +39,7 @@ export const setSessionToken = async (username: string): Promise<{ authSecret: s
 }
 
 export function hashPassword (password: string) {
-  const secretKey = env['AUTH_KEY'];
+  const secretKey = env['AUTH_KEY'] || Deno.env.get('AUTH_KEY');
   if (!secretKey) throw new Error('Env missing: AUTH_KEY');
   return hmac("sha256", secretKey , password , "utf8", "base64"); 
 }
