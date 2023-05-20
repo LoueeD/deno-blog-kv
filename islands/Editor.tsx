@@ -108,7 +108,6 @@ export default function Counter(props: EditorProps) {
       <div class="flex justify-end">
         <button type="submit">Post</button>
       </div>
-      {JSON.stringify(fields)}
     </form>
   );
 }
